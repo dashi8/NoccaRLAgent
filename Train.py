@@ -41,6 +41,7 @@ NUM_ACTION = 45  # 5*(8 + 1) (駒数*(周り8箇所+ゴール))
 
 
 def select_action(state):
+    # stateはtouchに変換済み
     global steps_done
 
     sample = random.random()
@@ -55,6 +56,20 @@ def select_action(state):
             return policy_net(state).max(1)[1].view(1, 1)
     else:
         return torch.tensor([[random.randrange(NUM_ACTION)]], device=device, dtype=torch.long)
+
+
+def best_action(state):
+    # stateを1次元に
+    state = state.flatten()
+    # stateをPytorch Tensorに
+    state = torch.from_numpy(state.astype(np.float32)).clone()
+    # Add a batch dimension (BCHW)
+    state = state.unsqueeze(0).to(device)
+    with torch.no_grad():
+        # t.max(1) will return largest column value of each row.
+        # second column on max result is index of where max element was
+        # found, so we pick action with the larger expected reward.
+        return policy_net(state).max(1)[1].view(1, 1)
 
 
 episode_durations = []
@@ -282,12 +297,12 @@ def make_action(action_index):
     return reward, done
 
 
-def main():
+def train():
     global IsPrintLogs
     IsPrintLogs = False
 
     global RLFirst
-    num_episodes = 1
+    num_episodes = 10
     RLFirst = -1
     for i_episode in range(num_episodes):
         # Initialize the environment
@@ -340,7 +355,7 @@ def main():
                 print("{}th\n".format(i_episode))
                 print("RLFirst:{}".format(RLFirst))
                 print("Winner:{}".format(nocca.winner))
-                nocca.render()
+                # nocca.render()
                 # plot_durations()
                 break
         # Update the target network, copying all weights and biases in DQN
@@ -351,6 +366,50 @@ def main():
     nocca.render()
     plt.ioff()
     plt.show()
+
+
+def test():
+    BATTLE_NUM = 1000
+    rl_win_num = 0
+
+    MyInputGenerator = CPU(player=-1, nocca=nocca, policy_type="Random")
+    for i in range(BATTLE_NUM):
+        nocca.initState()
+
+        while nocca.winner == 0:
+            prevPoint = None
+            nextPoint = None
+            if(nocca.isMyTurn == RLFirst):
+                # 動ける場所を返さない場合はとりあえずランダムで
+                # できれば2番目に出力大いいヤツがいい
+                prevPoint, nextPoint = actionIndex_movePoint(
+                    best_action(nocca.getState()))
+                canMove = False
+                for canP in nocca.canMovePointsFrom(prevPoint):
+                    if np.all(nextPoint == canP):
+                        canMove = True
+                        break
+                if not canMove:
+                    print("random select")
+                    prevPoint, nextPoint = MyInputGenerator.getIput()
+
+            elif(nocca.isMyTurn == -1 * RLFirst):
+                prevPoint, nextPoint = MyInputGenerator.getIput()
+
+            nocca.move(prevPoint, nextPoint, True)
+
+        if nocca.winner == RLFirst:
+            rl_win_num += 1
+            print("{}/{} end".format(i+1, BATTLE_NUM))
+
+    print("Complete")
+    print("Win Rate:{}% {}/{}".format(100*rl_win_num /
+                                      BATTLE_NUM, rl_win_num, BATTLE_NUM))
+
+
+def main():
+    train()
+    test()
 
 
 if __name__ == "__main__":
