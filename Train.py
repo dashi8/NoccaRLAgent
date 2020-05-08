@@ -363,7 +363,8 @@ def train():
                 episode_durations.append(t + 1)
                 print("{}th".format(i_episode))
                 print("RLFirst:{}".format(RLFirst))
-                print("Winner:{}\n".format(nocca.winner))
+                print("Winner:{}\n".format(
+                    "RL" if nocca.winner == RLFirst else "CPU"))
                 # nocca.render()
                 # plot_durations()
                 break
