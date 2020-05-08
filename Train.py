@@ -308,7 +308,7 @@ def make_action(action_index):
 
 def train():
     global IsPrintLogs
-    IsPrintLogs = False
+    IsPrintLogs = True
 
     global RLFirst
     num_episodes = 500
