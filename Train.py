@@ -1,6 +1,7 @@
 from NoccaEnv import NoccaEnv
 from Input import Input
 from CPU.CPU import CPU
+import os
 import math
 import random
 import numpy as np
@@ -58,7 +59,8 @@ def select_action(state):
         return torch.tensor([[random.randrange(NUM_ACTION)]], device=device, dtype=torch.long)
 
 
-def best_action(state):
+def best_action(state, rank):
+    # rank番目に価値が大きな行動を返す rank=0,1,2,...
     # stateを1次元に
     state = state.flatten()
     # stateをPytorch Tensorに
@@ -69,7 +71,8 @@ def best_action(state):
         # t.max(1) will return largest column value of each row.
         # second column on max result is index of where max element was
         # found, so we pick action with the larger expected reward.
-        return policy_net(state).max(1)[1].view(1, 1)
+        output_np = policy_net(state).to('cpu').detach().numpy().copy()[0]
+        return np.argsort(output_np)[-(rank + 1)]
 
 
 episode_durations = []
@@ -302,7 +305,7 @@ def train():
     IsPrintLogs = False
 
     global RLFirst
-    num_episodes = 10
+    num_episodes = 500
     RLFirst = -1
     for i_episode in range(num_episodes):
         # Initialize the environment
@@ -352,9 +355,9 @@ def train():
             optimize_model()
             if done:
                 episode_durations.append(t + 1)
-                print("{}th\n".format(i_episode))
+                print("{}th".format(i_episode))
                 print("RLFirst:{}".format(RLFirst))
-                print("Winner:{}".format(nocca.winner))
+                print("Winner:{}\n".format(nocca.winner))
                 # nocca.render()
                 # plot_durations()
                 break
@@ -362,6 +365,11 @@ def train():
         if i_episode % TARGET_UPDATE == 0:
             target_net.load_state_dict(policy_net.state_dict())
 
+    # モデルを保存
+    WEIGHT_DIR = "./weight/"
+    if not os.path.exists(WEIGHT_DIR):
+        os.makedirs(WEIGHT_DIR)
+    torch.save(policy_net.state_dict(), WEIGHT_DIR + "weight.pth")
     print('Complete')
     nocca.render()
     plt.ioff()
@@ -369,7 +377,7 @@ def train():
 
 
 def test():
-    BATTLE_NUM = 1000
+    BATTLE_NUM = 100
     rl_win_num = 0
 
     MyInputGenerator = CPU(player=-1, nocca=nocca, policy_type="Random")
@@ -380,18 +388,20 @@ def test():
             prevPoint = None
             nextPoint = None
             if(nocca.isMyTurn == RLFirst):
-                # 動ける場所を返さない場合はとりあえずランダムで
-                # できれば2番目に出力大いいヤツがいい
+                rank = 0
                 prevPoint, nextPoint = actionIndex_movePoint(
-                    best_action(nocca.getState()))
+                    best_action(nocca.getState(), rank))  # 価値最大
                 canMove = False
-                for canP in nocca.canMovePointsFrom(prevPoint):
-                    if np.all(nextPoint == canP):
-                        canMove = True
-                        break
-                if not canMove:
-                    print("random select")
-                    prevPoint, nextPoint = MyInputGenerator.getIput()
+                while not canMove:
+                    for canP in nocca.canMovePointsFrom(prevPoint):
+                        if np.all(nextPoint == canP):
+                            canMove = True
+                            print(rank)
+                            break
+                    if not canMove:
+                        rank += 1
+                        prevPoint, nextPoint = actionIndex_movePoint(
+                            best_action(nocca.getState(), rank))
 
             elif(nocca.isMyTurn == -1 * RLFirst):
                 prevPoint, nextPoint = MyInputGenerator.getIput()

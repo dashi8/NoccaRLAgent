@@ -93,7 +93,7 @@ class NoccaEnv:
         if cs is None:
             checkState = self.state
         else:
-            checkState = np.copy(cs)
+            checkState = cs
 
         fromPoint = np.array(fromPoint)
         canMovePoints = []
@@ -143,7 +143,7 @@ class NoccaEnv:
         if sc is None:
             checkState = self.state
         else:
-            checkState = np.copy(sc)
+            checkState = sc
         topstate = 0
         step = -1
         # ゴールの時
