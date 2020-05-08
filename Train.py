@@ -233,6 +233,7 @@ def actionIndex_movePoint(action_index):
             if checkingActoinIndex == action_index:
                 prevPoint = p
                 if pi is None:
+                    print("debug!!!!!!!!!!!!!")
                     if nocca.isMyTurn == 1:
                         nextPoint = nocca.MyGoalPoint
                     elif nocca.isMyTurn == -1:
@@ -399,7 +400,7 @@ def test():
                 player=-1 * RLFirst, nocca=nocca, policy_type="Random")
         else:
             MyInputGenerator = CPU(player=-1 * RLFirst,
-                                   nocca=nocca, policy_type="Rule")
+                                   nocca=nocca, policy_type="Random")
 
         while nocca.winner == 0:
             prevPoint = None
