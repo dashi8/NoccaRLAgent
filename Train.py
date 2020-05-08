@@ -186,6 +186,7 @@ class DQN(nn.Module):
 
 # Log
 IsPrintLogs = False
+WEIGHT_DIR = "./weight/"
 
 nocca = NoccaEnv(1)
 # myInputGenerator = Input(nocca)
@@ -197,6 +198,10 @@ policy_net = DQN(NoccaEnv.XRANGE * NoccaEnv.YRANGE *
                  NoccaEnv.ZRANGE, NUM_ACTION).to(device)
 target_net = DQN(NoccaEnv.XRANGE * NoccaEnv.YRANGE *
                  NoccaEnv.ZRANGE, NUM_ACTION).to(device)
+# ./weight/pre.pthがあればそれを読み込む
+if os.path.isfile(WEIGHT_DIR + "pre.pth"):
+    print("Load Pre-Trained Model")
+    policy_net.load_state_dict(torch.load(WEIGHT_DIR + "pre.pth"))
 target_net.load_state_dict(policy_net.state_dict())
 target_net.eval()
 optimizer = optim.RMSprop(policy_net.parameters())
@@ -366,7 +371,6 @@ def train():
             target_net.load_state_dict(policy_net.state_dict())
 
     # モデルを保存
-    WEIGHT_DIR = "./weight/"
     if not os.path.exists(WEIGHT_DIR):
         os.makedirs(WEIGHT_DIR)
     torch.save(policy_net.state_dict(), WEIGHT_DIR + "weight.pth")
