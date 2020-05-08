@@ -49,7 +49,6 @@ def select_action(state):
     eps_threshold = EPS_END + (EPS_START - EPS_END) * \
         math.exp(-1. * steps_done / EPS_DECAY)
     steps_done += 1
-    print(eps_threshold)
     if sample > eps_threshold:
         with torch.no_grad():
             # t.max(1) will return largest column value of each row.
