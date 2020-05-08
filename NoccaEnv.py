@@ -65,6 +65,7 @@ class NoccaEnv:
         # canMoveのときだけ移動後のstateをコピー
         # ターン交代
         if canMove:
+            print("herehere")
             print(self.isMyTurn)
             self.isMyTurn *= -1
             self.state = copiedState
