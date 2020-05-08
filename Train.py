@@ -35,7 +35,7 @@ BATCH_SIZE = 64
 GAMMA = 0.999
 EPS_START = 0.9
 EPS_END = 0.05
-EPS_DECAY = 200
+EPS_DECAY = 2000
 TARGET_UPDATE = 10
 
 NUM_ACTION = 45  # 5*(8 + 1) (駒数*(周り8箇所+ゴール))
@@ -49,6 +49,7 @@ def select_action(state):
     eps_threshold = EPS_END + (EPS_START - EPS_END) * \
         math.exp(-1. * steps_done / EPS_DECAY)
     steps_done += 1
+    print(eps_threshold)
     if sample > eps_threshold:
         with torch.no_grad():
             # t.max(1) will return largest column value of each row.
@@ -312,7 +313,7 @@ def train():
 
     IsPrintLogs = False
 
-    num_episodes = 500
+    num_episodes = 5000
     RLFirst = -1
     for i_episode in range(num_episodes):
         # Initialize the environment
@@ -391,7 +392,7 @@ def train():
 
 
 def test():
-    BATTLE_NUM = 100
+    BATTLE_NUM = 1000
     rl_win_num = 0
 
     for i in range(BATTLE_NUM):
