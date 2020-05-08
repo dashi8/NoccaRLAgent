@@ -25,7 +25,6 @@ class NoccaEnv:
             self.state[self.XRANGE - 1][0][z] = -1
 
     def move(self, prevPoint, nextPoint, canMove):
-        print(self.isMyTurn)
         prevPoint = np.array(prevPoint)
         nextPoint = np.array(nextPoint)
 
@@ -66,6 +65,7 @@ class NoccaEnv:
         # canMoveのときだけ移動後のstateをコピー
         # ターン交代
         if canMove:
+            print(self.isMyTurn)
             self.isMyTurn *= -1
             self.state = copiedState
         return copiedState
