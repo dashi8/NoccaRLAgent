@@ -65,13 +65,13 @@ class NoccaEnv:
         # canMoveのときだけ移動後のstateをコピー
         # ターン交代
         if canMove:
-            print("herehere")
-            print(self.isMyTurn)
             self.isMyTurn *= -1
             self.state = copiedState
         return copiedState
 
     def checkAllPieceCannotMove(self, checkState):
+        print("checkAllPieceCannotMove")
+        print(self.isMyTurn)
         cannotMove = True
         for x in range(self.XRANGE):
             for z in range(self.ZRANGE):
