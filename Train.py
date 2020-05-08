@@ -244,6 +244,7 @@ def actionIndex_movePoint(action_index):
 
 
 def make_action(action_index):
+    global IsPrintLogs
     RL_WIN_REWARD = 10
     RL_LOSE_REWARD = -10
     CANNOT_MOVE_REWARD = -1
