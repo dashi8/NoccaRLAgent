@@ -190,8 +190,8 @@ WEIGHT_DIR = "./weight/"
 
 nocca = NoccaEnv(1)
 # myInputGenerator = Input(nocca)
-cpuInputGenerator = CPU(player=-1, nocca=nocca, policy_type="Rule")
 RLFirst = -1
+cpuInputGenerator = CPU(player=-1 * RLFirst, nocca=nocca, policy_type="Rule")
 
 # DQN network
 policy_net = DQN(NoccaEnv.XRANGE * NoccaEnv.YRANGE *
@@ -319,10 +319,11 @@ def train():
         nocca.initState()
         # cpuはrandomとruleの両方
         if i_episode // 2 == 0:
-            cpuInputGenerator = CPU(player=-1, nocca=nocca, policy_type="Rule")
+            cpuInputGenerator = CPU(
+                player=-1 * RLFirst, nocca=nocca, policy_type="Rule")
         else:
             cpuInputGenerator = CPU(
-                player=-1, nocca=nocca, policy_type="Random")
+                player=-1 * RLFirst, nocca=nocca, policy_type="Random")
         state = nocca.getState()
         # stateを1次元に
         state = state.flatten()
@@ -397,9 +398,10 @@ def test():
         nocca.initState()
         if i // 2 == 0:
             MyInputGenerator = CPU(
-                player=-1, nocca=nocca, policy_type="Random")
+                player=-1 * RLFirst, nocca=nocca, policy_type="Random")
         else:
-            MyInputGenerator = CPU(player=-1, nocca=nocca, policy_type="Rule")
+            MyInputGenerator = CPU(player=-1 * RLFirst,
+                                   nocca=nocca, policy_type="Rule")
 
         while nocca.winner == 0:
             prevPoint = None
