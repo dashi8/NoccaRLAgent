@@ -29,7 +29,8 @@ class NoccaEnv:
         nextPoint = np.array(nextPoint)
 
         # 動かせるポイントが渡されること前提
-        # 動かせないときとゲーム終了時はNoneを返す
+        # 動かせないときはNone
+        # 動かしてゲーム終了時は"win"を返す
         # それ以外のときは移動後のstateを返す
 
         prevTopState = self.topState(prevPoint)
@@ -48,11 +49,11 @@ class NoccaEnv:
         if(np.all(nextPoint == self.MyGoalPoint)):
             self.winner = 1
             self.isGameOver = True
-            return None
+            return "win"
         elif(np.all(nextPoint == self.OppGoalPoint)):
             self.winner = -1
             self.isGameOver = True
-            return None
+            return "win"
 
         # 移動処理
         copiedState = np.copy(self.state)
@@ -61,7 +62,7 @@ class NoccaEnv:
         copiedState[prevPoint[0]][prevTopState[1]][prevPoint[1]] = 0
         # 次の人が動かせない（ゲーム終了）
         if self.checkAllPieceCannotMove(canMove, copiedState):
-            return None
+            return "win"
         # canMoveのときだけ移動後のstateをコピー
         # ターン交代
         if canMove:

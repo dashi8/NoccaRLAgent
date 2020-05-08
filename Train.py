@@ -185,7 +185,7 @@ class DQN(nn.Module):
 
 
 # Log
-IsPrintLogs = True
+IsPrintLogs = False
 WEIGHT_DIR = "./weight/"
 
 nocca = NoccaEnv(1)
@@ -309,8 +309,6 @@ def make_action(action_index):
 def train():
     global IsPrintLogs
     global RLFirst
-
-    IsPrintLogs = False
 
     num_episodes = 5000
     RLFirst = -1

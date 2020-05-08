@@ -27,8 +27,15 @@ class Rule:
                     breakFlag = True
                     break
 
-                tmpValue = self.stateEvaluatedValue(
-                    self.nocca.move(prevP, nextP, False))
+                nextstate = self.nocca.move(prevP, nextP, False)
+                # 相手の駒を動かせなくして勝利
+                if nextstate == "win":
+                    maxPrevList = [prevP]
+                    maxNextList = [nextP]
+                    breakFlag = True
+                    break
+
+                tmpValue = self.stateEvaluatedValue(nextstate)
                 if tmpValue > maxValue:
                     maxValue = tmpValue
                     maxPrevList = [prevP]
