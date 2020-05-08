@@ -185,12 +185,12 @@ class DQN(nn.Module):
 
 
 # Log
-IsPrintLogs = False
+IsPrintLogs = True
 WEIGHT_DIR = "./weight/"
 
 nocca = NoccaEnv(1)
 # myInputGenerator = Input(nocca)
-cpuInputGenerator = CPU(player=-1, nocca=nocca, policy_type="Random")
+cpuInputGenerator = CPU(player=-1, nocca=nocca, policy_type="Rule")
 RLFirst = -1
 
 # DQN network

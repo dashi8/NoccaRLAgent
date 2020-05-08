@@ -82,7 +82,7 @@ class NoccaEnv:
                 break
 
         if cannotMove:
-            print("cannotMove")
+            print("winner:{}:cannotMove".format(self.isMyTurn))
             self.isGameOver = True
             self.winner = self.isMyTurn
 
