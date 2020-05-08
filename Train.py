@@ -308,14 +308,21 @@ def make_action(action_index):
 
 def train():
     global IsPrintLogs
+    global RLFirst
+
     IsPrintLogs = False
 
-    global RLFirst
     num_episodes = 500
     RLFirst = -1
     for i_episode in range(num_episodes):
         # Initialize the environment
         nocca.initState()
+        # cpuはrandomとruleの両方
+        if i_episode // 2 == 0:
+            cpuInputGenerator = CPU(player=-1, nocca=nocca, policy_type="Rule")
+        else:
+            cpuInputGenerator = CPU(
+                player=-1, nocca=nocca, policy_type="Random")
         state = nocca.getState()
         # stateを1次元に
         state = state.flatten()
@@ -386,9 +393,13 @@ def test():
     BATTLE_NUM = 100
     rl_win_num = 0
 
-    MyInputGenerator = CPU(player=-1, nocca=nocca, policy_type="Random")
     for i in range(BATTLE_NUM):
         nocca.initState()
+        if i // 2 == 0:
+            MyInputGenerator = CPU(
+                player=-1, nocca=nocca, policy_type="Random")
+        else:
+            MyInputGenerator = CPU(player=-1, nocca=nocca, policy_type="Rule")
 
         while nocca.winner == 0:
             prevPoint = None
