@@ -308,7 +308,7 @@ def make_action(action_index):
 
 def train():
     global IsPrintLogs
-    IsPrintLogs = True
+    IsPrintLogs = False
 
     global RLFirst
     num_episodes = 500
@@ -401,7 +401,6 @@ def test():
                     for canP in nocca.canMovePointsFrom(prevPoint):
                         if np.all(nextPoint == canP):
                             canMove = True
-                            print(rank)
                             break
                     if not canMove:
                         rank += 1

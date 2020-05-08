@@ -60,7 +60,7 @@ class NoccaEnv:
                                   1][nextPoint[1]] = prevTopState[0]
         copiedState[prevPoint[0]][prevTopState[1]][prevPoint[1]] = 0
         # 次の人が動かせない（ゲーム終了）
-        if self.checkAllPieceCannotMove(copiedState):
+        if self.checkAllPieceCannotMove(canMove, copiedState):
             return None
         # canMoveのときだけ移動後のstateをコピー
         # ターン交代
@@ -69,9 +69,7 @@ class NoccaEnv:
             self.state = copiedState
         return copiedState
 
-    def checkAllPieceCannotMove(self, checkState):
-        print("checkAllPieceCannotMove")
-        print(self.isMyTurn)
+    def checkAllPieceCannotMove(self, canMove, checkState):
         cannotMove = True
         for x in range(self.XRANGE):
             for z in range(self.ZRANGE):
@@ -83,7 +81,7 @@ class NoccaEnv:
             if not cannotMove:
                 break
 
-        if cannotMove:
+        if canMove and cannotMove:
             print("winner:{}:cannotMove".format(self.isMyTurn))
             self.isGameOver = True
             self.winner = self.isMyTurn
