@@ -191,7 +191,7 @@ WEIGHT_DIR = "./weight/"
 nocca = NoccaEnv(1)
 # myInputGenerator = Input(nocca)
 RLFirst = -1
-cpuInputGenerator = CPU(player=-1 * RLFirst, nocca=nocca, policy_type="Rule")
+cpuInputGenerator = None
 
 # DQN network
 policy_net = DQN(NoccaEnv.XRANGE * NoccaEnv.YRANGE *
@@ -233,7 +233,6 @@ def actionIndex_movePoint(action_index):
             if checkingActoinIndex == action_index:
                 prevPoint = p
                 if pi is None:
-                    print("debug!!!!!!!!!!!!!")
                     if nocca.isMyTurn == 1:
                         nextPoint = nocca.MyGoalPoint
                     elif nocca.isMyTurn == -1:
@@ -310,6 +309,7 @@ def make_action(action_index):
 def train():
     global IsPrintLogs
     global RLFirst
+    global cpuInputGenerator
 
     num_episodes = 5000
     RLFirst = -1
@@ -397,7 +397,7 @@ def test():
         nocca.initState()
         if i // 2 == 0:
             MyInputGenerator = CPU(
-                player=-1 * RLFirst, nocca=nocca, policy_type="Random")
+                player=-1 * RLFirst, nocca=nocca, policy_type="Rule")
         else:
             MyInputGenerator = CPU(player=-1 * RLFirst,
                                    nocca=nocca, policy_type="Random")
