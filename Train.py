@@ -309,6 +309,7 @@ def train():
     global IsPrintLogs
     global RLFirst
     global cpuInputGenerator
+    global nocca
 
     # モデルを保存するディレクトリを作成
     if not os.path.exists(WEIGHT_DIR):
@@ -318,6 +319,7 @@ def train():
     RLFirst = -1
     for i_episode in range(num_episodes):
         # Initialize the environment
+        nocca = NoccaEnv(1)
         nocca.initState()
         # cpuはrandomとruleの両方
         if i_episode // 2 == 0:
@@ -393,10 +395,12 @@ def train():
 
 
 def test():
+    global nocca
     BATTLE_NUM = 1000
     rl_win_num = 0
 
     for i in range(BATTLE_NUM):
+        nocca = NoccaEnv(1)
         nocca.initState()
         if i // 2 == 0:
             MyInputGenerator = CPU(

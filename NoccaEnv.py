@@ -71,6 +71,7 @@ class NoccaEnv:
         return copiedState
 
     def checkAllPieceCannotMove(self, canMove, checkState):
+        self.isMyTurn *= -1
         cannotMove = True
         for x in range(self.XRANGE):
             for z in range(self.ZRANGE):
@@ -82,6 +83,7 @@ class NoccaEnv:
             if not cannotMove:
                 break
 
+        self.isMyTurn *= -1
         if canMove and cannotMove:
             print("winner:{}:cannotMove".format(self.isMyTurn))
             self.isGameOver = True
