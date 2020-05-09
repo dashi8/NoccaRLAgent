@@ -31,7 +31,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 steps_done = 0
 
-BATCH_SIZE = 64
+BATCH_SIZE = 32
 GAMMA = 0.999
 EPS_START = 0.9
 EPS_END = 0.05
@@ -106,6 +106,8 @@ def optimize_model():
     # detailed explanation). This converts batch-array of Transitions
     # to Transition of batch-arrays.
     batch = Transition(*zip(*transitions))
+    print(batch)
+    exit()
 
     # Compute a mask of non-final states and concatenate the batch elements
     # (a final state would've been the one after which simulation ended)
@@ -311,6 +313,10 @@ def train():
     global RLFirst
     global cpuInputGenerator
 
+    # モデルを保存するディレクトリを作成
+    if not os.path.exists(WEIGHT_DIR):
+        os.makedirs(WEIGHT_DIR)
+
     num_episodes = 1500
     RLFirst = -1
     for i_episode in range(num_episodes):
@@ -379,10 +385,10 @@ def train():
         if i_episode % TARGET_UPDATE == 0:
             target_net.load_state_dict(policy_net.state_dict())
 
-    # モデルを保存
-    if not os.path.exists(WEIGHT_DIR):
-        os.makedirs(WEIGHT_DIR)
-    torch.save(policy_net.state_dict(), WEIGHT_DIR + "weight.pth")
+        if i_episode % 100 == 0:
+            # たまにモデルを保存
+            torch.save(policy_net.state_dict(), WEIGHT_DIR + "weight.pth")
+
     print('Complete')
     nocca.render()
     plt.ioff()
