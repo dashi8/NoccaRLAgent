@@ -35,7 +35,7 @@ BATCH_SIZE = 64
 GAMMA = 0.999
 EPS_START = 0.9
 EPS_END = 0.05
-EPS_DECAY = 2000
+EPS_DECAY = 600
 TARGET_UPDATE = 10
 
 NUM_ACTION = 45  # 5*(8 + 1) (駒数*(周り8箇所+ゴール))
@@ -311,7 +311,7 @@ def train():
     global RLFirst
     global cpuInputGenerator
 
-    num_episodes = 5000
+    num_episodes = 1500
     RLFirst = -1
     for i_episode in range(num_episodes):
         # Initialize the environment
